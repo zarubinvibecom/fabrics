@@ -1,0 +1,158 @@
+<title>Схема фабрики контента</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one wide node canvas (blueprint of the pipeline), then two compact reference tables, one per block */
+:root{
+  --bg:#EFF1EC; --surface:#FFFFFF; --lane:#E4E8E1; --ink:#1B2320; --muted:#5B6661;
+  --line:#C3CABF; --edge:#7D8983; --human:#C25E17; --human-ink:#FFFFFF; --loop:#17786A;
+  --display:"Onest",system-ui,sans-serif; --body:"Onest",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121614; --surface:#1B201E; --lane:#171C1A; --ink:#E5EAE6; --muted:#97A29C;
+  --line:#36403B; --edge:#748079; --human:#E9853C; --human-ink:#1A0F06; --loop:#48BFA9; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121614; --surface:#1B201E; --lane:#171C1A; --ink:#E5EAE6; --muted:#97A29C;
+  --line:#36403B; --edge:#748079; --human:#E9853C; --human-ink:#1A0F06; --loop:#48BFA9; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:32px 56px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,38px);line-height:1.15;margin:0 0 10px;text-wrap:balance;letter-spacing:-.01em}
+.lead{max-width:68ch;color:var(--muted);margin:0 0 24px}
+.lead b{color:var(--ink);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted);margin:0 0 14px}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:22px;height:12px;border-radius:3px;border:1.5px solid var(--line);background:var(--surface)}
+.sw.h{background:var(--human);border-color:var(--human)}
+.sw.d{border-style:dashed;background:transparent}
+.sw.l{border:none;height:0;border-top:2px dashed var(--loop);border-radius:0}
+figure{margin:0}
+.canvas{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.canvas svg{display:block;width:100%;min-width:1100px;height:auto}
+figcaption{font-size:13px;color:var(--muted);margin-top:10px;max-width:80ch}
+/* svg parts */
+.lane{fill:var(--lane)}
+.lh{font:600 12px var(--mono);letter-spacing:.06em;fill:var(--muted)}
+.n rect{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.n.src rect{fill:var(--lane);stroke-dasharray:0}
+.n.man rect{stroke-dasharray:5 4;fill:transparent}
+.n.hum rect{fill:var(--human);stroke:var(--human)}
+.n.hum text{fill:var(--human-ink)}
+.k{font:600 10px var(--mono);letter-spacing:.08em;fill:var(--muted)}
+.t{font:700 15px var(--display);fill:var(--ink)}
+.t2{font:600 13px var(--display);fill:var(--ink)}
+.l{font:400 12px var(--body);fill:var(--muted)}
+.l2{font:400 11px var(--body);fill:var(--muted)}
+.p{fill:var(--surface);stroke:var(--edge);stroke-width:1.5}
+.e{fill:none;stroke:var(--edge);stroke-width:1.5}
+.e.man{stroke-dasharray:5 4}
+.ah{fill:var(--edge)}
+.loop{fill:none;stroke:var(--loop);stroke-width:2;stroke-dasharray:7 5}
+.ahl{fill:var(--loop)}
+.el{font:500 12px var(--body);fill:var(--ink)}
+.ll{font:600 12px var(--body);fill:var(--loop)}
+/* text sections */
+h2{font-family:var(--display);font-size:22px;font-weight:700;margin:44px 0 6px;text-wrap:balance}
+h2 small{display:block;font:600 11px var(--mono);letter-spacing:.08em;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
+.sub{color:var(--muted);margin:0 0 14px;max-width:70ch}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:none}
+th{font:600 11px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--lane)}
+td:first-child{font-weight:500;white-space:nowrap}
+td code,li code,p code{font-family:var(--mono);font-size:12.5px}
+.price{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.cols > div{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.cols h3{font-family:var(--display);font-size:16px;margin:0 0 6px}
+.cols p,.cols ul{margin:0;color:var(--muted);font-size:14px}
+.cols ul{padding-left:18px}
+.cols li+li{margin-top:4px}
+.step{font:600 11px var(--mono);letter-spacing:.08em;color:var(--human)}
+</style>
+
+<div class="wrap">
+<h1>Схема фабрики контента</h1>
+<p class="lead">Два автоматических блока и вы посередине. <b>Блок 1</b> сам собирает материалы блогеров, трендов и changelog'ов, разбирает их и раз в неделю присылает вам лучшие досье. <b>Вы</b> перерабатываете и снимаете. <b>Блок 2</b> берёт готовый файл, нарезает, упаковывает под каждую сеть и после одного вашего нажатия публикует везде. Метрики возвращаются в скоринг, и сбор со временем приносит то, что у вас заходит.</p>
+
+<div class="legend" aria-hidden="true">
+  <span><i class="sw"></i>автоматический узел</span>
+  <span><i class="sw h"></i>ваше участие</span>
+  <span><i class="sw d"></i>вручную, без API</span>
+  <span><i class="sw l"></i>обратная связь</span>
+</div>
+
+<figure>
+  <div class="canvas"><svg viewBox="0 0 1480 1030" role="img" aria-label="Схема фабрики: блок сбора собирает источники, разбирает и ранжирует их в библиотеку досье и присылает дайджест; вы перерабатываете и записываете; блок автовыкладки обрабатывает файл, упаковывает под площадки, после вашего одобрения публикует и возвращает метрики в скоринг."><defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker><marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ahl" d="M0,0 L10,5 L0,10 z"/></marker></defs><rect class="lane" x="0" y="6" width="1480" height="398" rx="16"/><rect class="lane" x="0" y="570" width="1480" height="452" rx="16"/><text class="lh" x="20" y="32" text-anchor="start">БЛОК 1 · СБОР СЫРЬЯ — работает сам, по расписанию</text><text class="lh" x="20" y="598" text-anchor="start">БЛОК 2 · АВТОВЫКЛАДКА — запускается, когда вы кладёте готовый файл</text><g class="n src"><rect x="20" y="60" width="170" height="44" rx="8"/><text class="t2" x="32" y="78">YouTube-блогеры</text><text class="l2" x="32" y="94">30–100 каналов</text><circle class="p" cx="190" cy="82" r="3.5"/></g><g class="n src"><rect x="20" y="116" width="170" height="44" rx="8"/><text class="t2" x="32" y="134">X-аккаунты</text><text class="l2" x="32" y="150">~50 авторов</text><circle class="p" cx="190" cy="138" r="3.5"/></g><g class="n src"><rect x="20" y="172" width="170" height="44" rx="8"/><text class="t2" x="32" y="190">Reddit · HN · GitHub</text><text class="l2" x="32" y="206">сабреддиты, тренды</text><circle class="p" cx="190" cy="194" r="3.5"/></g><g class="n src"><rect x="20" y="228" width="170" height="44" rx="8"/><text class="t2" x="32" y="246">Telegram-каналы</text><text class="l2" x="32" y="262">RU-конкуренты</text><circle class="p" cx="190" cy="250" r="3.5"/></g><g class="n src"><rect x="20" y="284" width="170" height="44" rx="8"/><text class="t2" x="32" y="302">Changelog&#x27;и</text><text class="l2" x="32" y="318">Cursor, Claude Code…</text><circle class="p" cx="190" cy="306" r="3.5"/></g><g class="n src"><rect x="20" y="340" width="170" height="44" rx="8"/><text class="t2" x="32" y="358">Ваша находка</text><text class="l2" x="32" y="374">ссылка с телефона</text><circle class="p" cx="190" cy="362" r="3.5"/></g><g class="n"><rect x="230" y="60" width="190" height="44" rx="8"/><text class="t2" x="242" y="78">yt-dlp</text><text class="l2" x="242" y="94">метаданные + субтитры</text><circle class="p" cx="230" cy="82" r="3.5"/><circle class="p" cx="420" cy="82" r="3.5"/></g><g class="n"><rect x="230" y="116" width="190" height="44" rx="8"/><text class="t2" x="242" y="134">Apify Tweet Scraper</text><text class="l2" x="242" y="150">~$6 в месяц</text><circle class="p" cx="230" cy="138" r="3.5"/><circle class="p" cx="420" cy="138" r="3.5"/></g><g class="n"><rect x="230" y="172" width="190" height="100" rx="8"/><text class="t2" x="242" y="195">RSSHub → Miniflux</text><text class="l2" x="242" y="215">RSS из любого сайта</text><text class="l2" x="242" y="232">и Telegram-канала,</text><text class="l2" x="242" y="249">фильтры, вебхук</text><circle class="p" cx="230" cy="194" r="3.5"/><circle class="p" cx="230" cy="250" r="3.5"/><circle class="p" cx="420" cy="222" r="3.5"/></g><g class="n"><rect x="230" y="284" width="190" height="44" rx="8"/><text class="t2" x="242" y="302">changedetection.io</text><text class="l2" x="242" y="318">следит за страницами</text><circle class="p" cx="230" cy="306" r="3.5"/><circle class="p" cx="420" cy="306" r="3.5"/></g><g class="n"><rect x="230" y="340" width="190" height="44" rx="8"/><text class="t2" x="242" y="358">TG-бот «сохрани»</text><text class="l2" x="242" y="374">или Karakeep</text><circle class="p" cx="230" cy="362" r="3.5"/><circle class="p" cx="420" cy="362" r="3.5"/></g><path class="e" d="M190,82 L226,82" marker-end="url(#a)"/><path class="e" d="M190,138 L226,138" marker-end="url(#a)"/><path class="e" d="M190,194 L226,194" marker-end="url(#a)"/><path class="e" d="M190,250 L226,250" marker-end="url(#a)"/><path class="e" d="M190,306 L226,306" marker-end="url(#a)"/><path class="e" d="M190,362 L226,362" marker-end="url(#a)"/><path class="e" d="M420,82 C448,82 442,215 466,215" marker-end="url(#a)"/><path class="e" d="M420,138 C448,138 442,215 466,215" marker-end="url(#a)"/><path class="e" d="M420,222 C448,222 442,215 466,215" marker-end="url(#a)"/><path class="e" d="M420,306 C448,306 442,215 466,215" marker-end="url(#a)"/><path class="e" d="M420,362 C448,362 442,215 466,215" marker-end="url(#a)"/><g class="n"><rect x="470" y="130" width="190" height="170" rx="10"/><text class="k" x="484" y="150">AI · CLAUDE</text><text class="t" x="484" y="170">Разбор</text><text class="l" x="484" y="189">транскрипт → тезисы</text><text class="l" x="484" y="206">хук и структура</text><text class="l" x="484" y="223">почему зашло</text><text class="l" x="484" y="240">ссылка на оригинал</text><circle class="p" cx="470" cy="215.0" r="4"/><circle class="p" cx="660" cy="215.0" r="4"/></g><path class="e" d="M660,215 L706,215" marker-end="url(#a)"/><g class="n"><rect x="710" y="130" width="190" height="170" rx="10"/><text class="k" x="724" y="150">AI · ФИЛЬТР</text><text class="t" x="724" y="170">Скоринг</text><text class="l" x="724" y="189">аутлайер ≥ 3× медианы</text><text class="l" x="724" y="206">склейка дублей</text><text class="l" x="724" y="223">парный турнир идей</text><text class="l" x="724" y="240">учёт learnings.md</text><circle class="p" cx="710" cy="215.0" r="4"/><circle class="p" cx="900" cy="215.0" r="4"/></g><path class="e" d="M900,215 L946,215" marker-end="url(#a)"/><g class="n"><rect x="950" y="130" width="190" height="170" rx="10"/><text class="k" x="964" y="150">ХРАНИЛИЩЕ</text><text class="t" x="964" y="170">Библиотека досье</text><text class="l" x="964" y="189">git: 1 идея = 1 .md</text><text class="l" x="964" y="206">оригинал + транскрипт</text><text class="l" x="964" y="223">тезисы + ваш угол</text><text class="l" x="964" y="240">статус: новое / взял</text><circle class="p" cx="950" cy="215.0" r="4"/><circle class="p" cx="1140" cy="215.0" r="4"/></g><path class="e" d="M1140,215 L1186,215" marker-end="url(#a)"/><g class="n"><rect x="1190" y="130" width="250" height="170" rx="10"/><text class="k" x="1204" y="150">ВЫХОД · ПН 10:00</text><text class="t" x="1204" y="170">Дайджест в Telegram</text><text class="l" x="1204" y="189">топ-15 досье за неделю</text><text class="l" x="1204" y="206">кнопки: Беру / Позже / Нет</text><text class="l" x="1204" y="223">срочное — сразу, если &gt; 10×</text><circle class="p" cx="1190" cy="215.0" r="4"/></g><g class="n hum"><rect x="840" y="440" width="600" height="96" rx="12"/><text class="k" x="860" y="464">ВЫ · ВРУЧНУЮ</text><text class="t" x="860" y="488">Переработка и запись</text><text class="l" x="860" y="510">читаете досье → добавляете свой опыт, баги, цифры</text><text class="l" x="860" y="527">→ снимаете видео или пишете текст</text></g><path class="e" d="M1315,300 L1315,436" marker-end="url(#a)"/><text class="el" x="1325" y="378" text-anchor="start">нажали «Беру»</text><path class="e" d="M840,488 L115,488 L115,686" marker-end="url(#a)"/><text class="el" x="470" y="478" text-anchor="middle">кладёте готовый файл в папку</text><g class="n"><rect x="20" y="690" width="190" height="130" rx="10"/><text class="k" x="34" y="710">ТРИГГЕР</text><text class="t" x="34" y="730">Папка «Готово»</text><text class="l" x="34" y="749">новый файл → старт</text><text class="l" x="34" y="766">видео, текст, обложка</text><text class="l" x="34" y="783">синк с сервером</text><circle class="p" cx="210" cy="755.0" r="4"/></g><path class="e" d="M210,755 L226,755" marker-end="url(#a)"/><g class="n"><rect x="230" y="690" width="190" height="130" rx="10"/><text class="k" x="244" y="710">ОБРАБОТКА</text><text class="t" x="244" y="730">Постпродакшн</text><text class="l" x="244" y="749">WhisperX: субтитры</text><text class="l" x="244" y="766">auto-editor: паузы</text><text class="l" x="244" y="783">3–5 Shorts 9:16</text><circle class="p" cx="230" cy="755.0" r="4"/><circle class="p" cx="420" cy="755.0" r="4"/></g><path class="e" d="M420,755 L466,755" marker-end="url(#a)"/><g class="n"><rect x="470" y="690" width="190" height="130" rx="10"/><text class="k" x="484" y="710">AI · CLAUDE + voice.md</text><text class="t" x="484" y="730">Упаковка</text><text class="l" x="484" y="749">заголовки, описания</text><text class="l" x="484" y="766">пост в TG, тред в X</text><text class="l" x="484" y="783">RU → EN по желанию</text><circle class="p" cx="470" cy="755.0" r="4"/><circle class="p" cx="660" cy="755.0" r="4"/></g><path class="e" d="M660,755 L706,755" marker-end="url(#a)"/><g class="n"><rect x="710" y="690" width="190" height="130" rx="10"/><text class="k" x="724" y="710">ПРОВЕРКА</text><text class="t" x="724" y="730">Контроль качества</text><text class="l" x="724" y="749">анти-слоп фильтр</text><text class="l" x="724" y="766">лимиты каждой сети</text><text class="l" x="724" y="783">ссылки и метки ИИ</text><circle class="p" cx="710" cy="755.0" r="4"/><circle class="p" cx="900" cy="755.0" r="4"/></g><path class="e" d="M900,755 L946,755" marker-end="url(#a)"/><g class="n hum"><rect x="950" y="690" width="190" height="130" rx="10"/><text class="k" x="964" y="710">ВЫ · ОДНО НАЖАТИЕ</text><text class="t" x="964" y="730">Одобрение в TG</text><text class="l" x="964" y="749">превью всех версий</text><text class="l" x="964" y="766">Да / Правка / Нет</text><text class="l" x="964" y="783">время публикации</text><circle class="p" cx="950" cy="755.0" r="4"/><circle class="p" cx="1140" cy="755.0" r="4"/></g><g class="n out"><rect x="1190" y="612" width="250" height="44" rx="8"/><text class="t2" x="1202" y="630">upload-post</text><text class="l2" x="1202" y="646">YouTube · Shorts · TikTok · Reels</text><circle class="p" cx="1190" cy="634" r="3.5"/><circle class="p" cx="1440" cy="634" r="3.5"/></g><path class="e" d="M1140,755 C1166,755 1162,634 1186,634" marker-end="url(#a)"/><g class="n out"><rect x="1190" y="664" width="250" height="44" rx="8"/><text class="t2" x="1202" y="682">Postiz</text><text class="l2" x="1202" y="698">X · Threads · Bluesky · LinkedIn</text><circle class="p" cx="1190" cy="686" r="3.5"/><circle class="p" cx="1440" cy="686" r="3.5"/></g><path class="e" d="M1140,755 C1166,755 1162,686 1186,686" marker-end="url(#a)"/><g class="n out"><rect x="1190" y="716" width="250" height="44" rx="8"/><text class="t2" x="1202" y="734">Telegram Bot API</text><text class="l2" x="1202" y="750">канал → Дзен через @zen_sync_bot</text><circle class="p" cx="1190" cy="738" r="3.5"/><circle class="p" cx="1440" cy="738" r="3.5"/></g><path class="e" d="M1140,755 C1166,755 1162,738 1186,738" marker-end="url(#a)"/><g class="n out"><rect x="1190" y="768" width="250" height="44" rx="8"/><text class="t2" x="1202" y="786">VK API</text><text class="l2" x="1202" y="802">стена · VK Видео · Клипы</text><circle class="p" cx="1190" cy="790" r="3.5"/><circle class="p" cx="1440" cy="790" r="3.5"/></g><path class="e" d="M1140,755 C1166,755 1162,790 1186,790" marker-end="url(#a)"/><g class="n out"><rect x="1190" y="820" width="250" height="44" rx="8"/><text class="t2" x="1202" y="838">Rutube API</text><text class="l2" x="1202" y="854">дубль длинных видео</text><circle class="p" cx="1190" cy="842" r="3.5"/><circle class="p" cx="1440" cy="842" r="3.5"/></g><path class="e" d="M1140,755 C1166,755 1162,842 1186,842" marker-end="url(#a)"/><g class="n out man"><rect x="1190" y="872" width="250" height="44" rx="8"/><text class="t2" x="1202" y="890">Хабр · VC.ru</text><text class="l2" x="1202" y="906">вручную, по готовому черновику</text><circle class="p" cx="1190" cy="894" r="3.5"/><circle class="p" cx="1440" cy="894" r="3.5"/></g><path class="e man" d="M1140,755 C1166,755 1162,894 1186,894" marker-end="url(#a)"/><path class="e" d="M1440,634 L1462,634 M1440,686 L1462,686 M1440,738 L1462,738 M1440,790 L1462,790 M1440,842 L1462,842 M1462,634 L1462,972"/><path class="e" d="M1462,972 L1444,972" marker-end="url(#a)"/><g class="n"><rect x="1190" y="944" width="250" height="56" rx="10"/><text class="t" x="1204" y="963">Метрики</text><text class="l" x="1204" y="979">через 1 ч / 24 ч / 7 дней</text><circle class="p" cx="1190" cy="972.0" r="4"/></g><path class="loop" d="M1190,972 L8,972 L8,48 L805,48 L805,126" marker-end="url(#b)"/><text class="ll" x="600" y="962" text-anchor="middle">что зашло → новые веса скоринга (learnings.md)</text></svg></div>
+  <figcaption>Каждый прямоугольник — отдельная нода (в n8n или как скилл Claude Code). Связи слева направо — поток данных. Пунктирная линия по краю — петля: метрики публикаций меняют, какие материалы сбор поднимает наверх.</figcaption>
+</figure>
+
+<h2><small>Блок 1</small>Сбор сырья для переработки</h2>
+<p class="sub">Цель блока не «идеи», а готовое досье: оригинал, транскрипт, разбор, почему зашло, и место под ваш угол. С ним вы садитесь записывать сразу.</p>
+<div class="tbl"><table>
+<thead><tr><th>Нода</th><th>Чем делать</th><th>Запасной вариант</th><th>Цена</th></tr></thead>
+<tbody>
+<tr><td>YouTube-блогеры</td><td>RSS канала + <code>yt-dlp</code>: метаданные последних 30 роликов и автосубтитры</td><td>1of10 или vidIQ для готовых аутлайеров</td><td class="price">$0 (1of10 от $29)</td></tr>
+<tr><td>X-аккаунты</td><td>Apify Tweet Scraper, список ~50 авторов</td><td>официальный X API pay-per-use</td><td class="price">~$6 / ~$75 в мес.</td></tr>
+<tr><td>Reddit, HN, GitHub</td><td>RSSHub → Miniflux; для Reddit приватный RSS-токен из настроек</td><td>скилл last30days раз в неделю</td><td class="price">$0</td></tr>
+<tr><td>Telegram-каналы</td><td>RSSHub, маршрут <code>/telegram/channel/имя</code></td><td>свой Telethon-скрипт</td><td class="price">$0</td></tr>
+<tr><td>Changelog'и</td><td>changedetection.io на страницах Cursor, Lovable, Bolt, Replit; GitHub Releases Atom для Claude Code</td><td>—</td><td class="price">$0</td></tr>
+<tr><td>Ваша находка</td><td>Telegram-бот: переслали ссылку → она в общем потоке</td><td>Karakeep</td><td class="price">$0</td></tr>
+<tr><td>Разбор</td><td>Claude: тезисы, хук, структура ролика, почему зашло</td><td>любая LLM-нода в n8n</td><td class="price">центы за досье</td></tr>
+<tr><td>Скоринг</td><td>просмотры / медиана канала (≥ 3× — сигнал), склейка дублей по эмбеддингам, парный турнир «что лучше» с учётом <code>learnings.md</code></td><td>простая оценка LLM 0–100</td><td class="price">$0–2 в мес.</td></tr>
+<tr><td>Библиотека досье</td><td>git-репозиторий, один <code>.md</code> на материал</td><td>Notion или NocoDB, если удобнее с телефона</td><td class="price">$0</td></tr>
+<tr><td>Дайджест</td><td>Telegram-бот, понедельник утром: топ-15 с кнопками; срочное (&gt;10×) — сразу</td><td>письмо</td><td class="price">$0</td></tr>
+</tbody></table></div>
+
+<h2><small>Блок 2</small>Автовыкладка готового</h2>
+<p class="sub">Вы кладёте длинное видео или текст в папку «Готово». Дальше всё происходит само, кроме одного нажатия «Да» в Telegram.</p>
+<div class="tbl"><table>
+<thead><tr><th>Нода</th><th>Чем делать</th><th>Запасной вариант</th><th>Цена</th></tr></thead>
+<tbody>
+<tr><td>Папка «Готово»</td><td>синхронизированная папка на сервере, n8n или cron ловит новый файл</td><td>отправка файла боту в Telegram</td><td class="price">$0</td></tr>
+<tr><td>Постпродакшн</td><td>WhisperX (субтитры), auto-editor (паузы), нарезка 3–5 Shorts 9:16 скиллом Claude + Remotion</td><td>OpusClip, Descript</td><td class="price">$0 (OpusClip от $15)</td></tr>
+<tr><td>Упаковка</td><td>Claude с файлом <code>voice.md</code>: заголовки, описания, пост в Telegram, тред в X, версия для LinkedIn; RU → EN по желанию</td><td>Typefully для текстов</td><td class="price">~$0,5–1 на ролик</td></tr>
+<tr><td>Контроль качества</td><td>анти-слоп фильтр (humanizer, avoid-ai-writing), лимиты длины каждой сети, проверка ссылок</td><td>—</td><td class="price">$0</td></tr>
+<tr><td>Одобрение</td><td>Telegram-бот: превью каждой версии, кнопки Да / Правка / Нет, выбор времени</td><td>n8n «Send and Wait»</td><td class="price">$0</td></tr>
+<tr><td>upload-post</td><td>YouTube, Shorts, TikTok, Reels через уже одобренное приложение сервиса, без своих аудитов</td><td>Zernio; TikTok «в черновики»</td><td class="price">$16–24 в мес.</td></tr>
+<tr><td>Postiz</td><td>X, Threads, Bluesky, LinkedIn (личный профиль); в X ссылку кладёт в ответ</td><td>Postiz Cloud, Typefully</td><td class="price">$0 self-host</td></tr>
+<tr><td>Telegram → Дзен</td><td>Bot API в канал, @zen_sync_bot сам переносит посты в Дзен</td><td>Postmypost</td><td class="price">$0</td></tr>
+<tr><td>VK, Rutube</td><td>VK API (стена, видео, клипы), Rutube API для длинных видео</td><td>Postmypost</td><td class="price">$0</td></tr>
+<tr><td>Хабр, VC.ru</td><td>API на публикацию нет: фабрика готовит черновик, вы публикуете сами</td><td>—</td><td class="price">—</td></tr>
+<tr><td>Метрики</td><td>ночной скрипт: через 1 ч, 24 ч и 7 дней; раз в неделю Claude обновляет <code>learnings.md</code></td><td>аналитика upload-post / Zernio</td><td class="price">$0</td></tr>
+</tbody></table></div>
+
+<h2><small>Как собрать</small>На чём это крутится и в каком порядке</h2>
+<div class="cols">
+  <div>
+    <span class="step">ИНФРАСТРУКТУРА</span>
+    <h3>Один VPS и n8n</h3>
+    <p>Сервер за рубежом за $6–12 в месяц, на нём docker compose: n8n, RSSHub, Miniflux, changedetection.io, Postiz. Расписания, вебхуки и кнопки в Telegram — в n8n. Ноды «Разбор», «Скоринг» и «Упаковка» вызывают Claude. Если удобнее код, те же шаги пишутся как скиллы Claude Code.</p>
+  </div>
+  <div>
+    <span class="step">НЕДЕЛЯ 1</span>
+    <h3>Сбор</h3>
+    <ul><li>Список из 30 YouTube-каналов и 20 Telegram-каналов</li><li>yt-dlp + RSSHub + Miniflux</li><li>Разбор и библиотека досье</li><li>Первый дайджест в понедельник</li></ul>
+  </div>
+  <div>
+    <span class="step">НЕДЕЛИ 2–3</span>
+    <h3>Автовыкладка</h3>
+    <ul><li>Сначала Telegram, YouTube и Shorts</li><li>Потом X, Threads, VK, Дзен</li><li>TikTok и Reels через upload-post</li><li>Бот одобрения с первого дня</li></ul>
+  </div>
+  <div>
+    <span class="step">МЕСЯЦ 2</span>
+    <h3>Петля</h3>
+    <ul><li>Метрики через 1 ч / 24 ч / 7 дней</li><li><code>learnings.md</code> раз в неделю</li><li>Скоринг учитывает, что у вас зашло</li><li>20% тем — эксперименты</li></ul>
+  </div>
+</div>
+
+<h2><small>Подводные камни</small>Что проверить до запуска</h2>
+<div class="cols">
+  <div><h3>Транскрипты YouTube</h3><p>YouTube блокирует запросы субтитров с облачных IP. Снимайте их с домашнего компьютера или через резидентный прокси.</p></div>
+  <div><h3>Аудиты API</h3><p>Свои приложения YouTube и TikTok без аудита публикуют только приватно. Поэтому видео идут через upload-post, а не напрямую.</p></div>
+  <div><h3>Цены X и Reddit</h3><p>Цены X API взяты из вторичных источников. Reddit выдаёт новые ключи API только после ручной проверки. Перепроверьте перед запуском.</p></div>
+  <div><h3>Ваш голос</h3><p>Сбор приносит сырьё, а не готовые посты. Без вашего опыта, багов и цифр платформы режут охваты ИИ-текстам, а Хабр их запрещает.</p></div>
+</div>
+</div>
