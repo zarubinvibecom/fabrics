@@ -1,0 +1,21 @@
+<section id="cover" data-transition="fade" style="background:radial-gradient(circle at 72% 50%, #1D2633 0%, #0F1318 60%);color:#F3EFE7;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px">
+<x-embed style="position:absolute;left:1060px;top:160px;width:760px;height:760px"><!doctype html><html><body style="margin:0;background:transparent;overflow:hidden"><canvas id="c" width="760" height="760"></canvas><script>
+const c=document.getElementById('c'),x=c.getContext('2d'),W=760,C=380;const labs=["Anthropic","Google","OpenAI","Mistral","Kimi","DeepSeek","Qwen","xAI"];
+const pts=labs.map((n,i)=>{const a=i/labs.length*Math.PI*2+0.4,r=150+((i*73)%170);return{n,a,r,x:C+Math.cos(a)*r,y:C+Math.sin(a)*r,t:-9}});
+let t0=performance.now();function f(now){const t=(now-t0)/1000,sw=(t*0.9)%(Math.PI*2);x.clearRect(0,0,W,W);
+for(let k=1;k<=4;k++){x.beginPath();x.arc(C,C,k*85,0,7);x.strokeStyle='rgba(134,174,255,'+(0.10+k*0.03)+')';x.lineWidth=1.5;x.stroke();}
+x.strokeStyle='rgba(134,174,255,0.12)';x.beginPath();x.moveTo(C-340,C);x.lineTo(C+340,C);x.moveTo(C,C-340);x.lineTo(C,C+340);x.stroke();
+const g=x.createConicGradient?x.createConicGradient(sw-0.9,C,C):null;if(g){g.addColorStop(0,'rgba(255,122,69,0)');g.addColorStop(0.14,'rgba(255,122,69,0.30)');g.addColorStop(0.1401,'rgba(255,122,69,0)');x.fillStyle=g;x.beginPath();x.arc(C,C,340,0,7);x.fill();}
+x.strokeStyle='#FF7A45';x.lineWidth=3;x.beginPath();x.moveTo(C,C);x.lineTo(C+Math.cos(sw)*340,C+Math.sin(sw)*340);x.stroke();
+pts.forEach(p=>{let d=(sw-((p.a%(Math.PI*2))+Math.PI*2)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);if(d<0.05)p.t=t;const age=t-p.t,al=Math.max(0,1-age/3.2);
+x.beginPath();x.arc(p.x,p.y,7,0,7);x.fillStyle=al>0?'rgba(255,122,69,'+(0.35+al*0.65)+')':'rgba(134,174,255,0.35)';x.fill();
+if(al>0){x.beginPath();x.arc(p.x,p.y,7+age*26,0,7);x.strokeStyle='rgba(255,122,69,'+al*0.6+')';x.lineWidth=2;x.stroke();}
+x.font='500 24px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';x.fillStyle=al>0?'rgba(243,239,231,'+(0.45+al*0.55)+')':'rgba(169,179,192,0.55)';x.textAlign=p.x<C?'right':'left';x.fillText(p.n,p.x+(p.x<C?-16:16),p.y+8);});
+x.beginPath();x.arc(C,C,9,0,7);x.fillStyle='#F3EFE7';x.fill();requestAnimationFrame(f);}requestAnimationFrame(f);
+</script></body></html></x-embed>
+<p data-build-in="fade order 1" style="position:absolute;left:128px;top:200px;width:900px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:#FF7A45">Вайб-кодинг · ежедневный конвейер</p>
+<h1 data-build-in="rise order 2" style="position:absolute;left:128px;top:270px;width:960px;font-family:'Unbounded', Verdana, sans-serif;font-size:104px;font-weight:700;line-height:1.05;color:#F3EFE7">Фабрика контента в работе</h1>
+<p data-build-in="rise order 3" style="position:absolute;left:128px;top:560px;width:860px;font-size:36px;line-height:1.4;color:#A9B3C0">Как система каждый день находит новости ИИ-лабораторий, проверяет факты и выкладывает ваши ролики во все сети</p>
+<p data-build-in="fade order 4" style="position:absolute;left:128px;top:820px;width:860px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A9B3C0">Радар справа — срочная линия: опрос лабораторий каждые 5–15 минут</p>
+<aside>Открываем: это не генератор роликов, а конвейер вокруг автора. Радар — живая метафора срочной линии.</aside>
+</section>

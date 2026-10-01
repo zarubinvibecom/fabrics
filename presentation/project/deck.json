@@ -1,0 +1,57 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-01T09:30:00Z"
+ },
+ "lists": "css",
+ "title": "Фабрика контента в работе",
+ "order": [
+  "cover",
+  "roles",
+  "pipeline",
+  "urgent",
+  "alert",
+  "background",
+  "facts",
+  "day",
+  "autopost",
+  "loop",
+  "roadmap",
+  "close"
+ ],
+ "cover": "cover",
+ "sections": {
+  "s1": {
+   "description": "Что это и чья роль",
+   "start": "cover"
+  },
+  "s2": {
+   "description": "Как тема проходит путь: сбор, фактура, решение",
+   "start": "pipeline"
+  },
+  "s3": {
+   "description": "Запись, автовыкладка и петля метрик",
+   "start": "day"
+  },
+  "s4": {
+   "description": "Запуск и итог",
+   "start": "roadmap"
+  }
+ },
+ "faces": {
+  "unbounded": {
+   "family": "Unbounded",
+   "href": "https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&display=swap"
+  },
+  "ibm-plex-sans": {
+   "family": "IBM Plex Sans",
+   "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap"
+  },
+  "jetbrains-mono": {
+   "family": "JetBrains Mono",
+   "href": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap"
+  }
+ },
+ "designSystems": []
+}
